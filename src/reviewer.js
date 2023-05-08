@@ -1,7 +1,7 @@
 "use strict";
 
 const core = require("@actions/core");
-const { get_octokit } = require("./github");
+const { get_octokit, get_context } = require("./github");
 const minimatch = require("minimatch");
 const sample_size = require("lodash/sampleSize");
 
@@ -164,6 +164,8 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
     repo: context.repo.repo,
     pull_number: context.payload.pull_request.number,
   });
+
+  console.log(JSON.stringify(existing_reviewers))
 
   // .then((response) => {
   //   // extract the reviewers from the response
