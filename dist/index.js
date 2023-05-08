@@ -16170,7 +16170,7 @@ if (process.env.NODE_ENV !== 'automated-testing') {
 
 
 const core = __nccwpck_require__(2186);
-const { get_octokit } = __nccwpck_require__(8396);
+const { get_octokit, get_context } = __nccwpck_require__(8396);
 const minimatch = __nccwpck_require__(3973);
 const sample_size = __nccwpck_require__(2199);
 
@@ -16333,6 +16333,8 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
     repo: context.repo.repo,
     pull_number: context.payload.pull_request.number,
   });
+
+  console.log(JSON.stringify(existing_reviewers))
 
   // .then((response) => {
   //   // extract the reviewers from the response
