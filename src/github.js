@@ -154,6 +154,8 @@ function clear_cache() {
 
 module.exports = {
   get_pull_request,
+  get_octokit,
+  get_context,
   fetch_config,
   fetch_changed_files,
   assign_reviewers,

@@ -10,7 +10,7 @@ const {
   identify_reviewers_by_author,
   should_request_review,
   fetch_default_reviewers,
-  randomly_pick_reviewers,
+  randomly_pick_reviewers_for_missing_slot,
 } = require('./reviewer');
 
 async function run() {
@@ -69,7 +69,7 @@ async function run() {
   }
 
   core.info('Randomly picking reviewers if the number of reviewers is set');
-  reviewers = randomly_pick_reviewers({ reviewers, config });
+  reviewers = randomly_pick_reviewers_for_missing_slot({ reviewers, config });
 
   core.info(`Requesting review to ${reviewers.join(', ')}`);
   await github.assign_reviewers(reviewers);
