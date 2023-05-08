@@ -33015,52 +33015,23 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
   const context = get_context();
   const octokit = get_octokit();
 
-  const { data } = await octokit.pulls.listRequestedReviewers({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    pull_number: context.payload.pull_request.number,
-  });
-
-  const existing_reviewers = data.users.map((user) => user.login);
-  console.log(JSON.stringify(existing_reviewers));
-  if (existing_reviewers >= 2) {
-    return [];
-  }
-  console.log(`------`);
-  console.log(JSON.stringify(reviewers));
-
-  const useable_reviewers = difference(reviewers, existing_reviewers);
-
-  // .then((response) => {
-  //   // extract the reviewers from the response
-  //   const reviewers = response.data.map((review) => review.user.login);
-  //   console.log(`Reviewers: ${reviewers.join(", ")}`);
-
-  //   // use the reviewers in your Node.js script
-  //   // for example, you can pass the reviewers as input to another function
-  //   someFunctionThatUsesReviewers(reviewers);
-  // })
-  // .catch((error) => {
-  //   console.log(`Error fetching reviews: ${error.message}`);
-  // });
-
-  console.log(useable_reviewers);
-  console.log(`---------------`);
-  console.log(
-    existing_reviewers.concat(
+  try {
+    const { data } = await octokit.pulls.listRequestedReviewers({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      pull_number: context.payload.pull_request.number,
+    });
+    const existing_reviewers = data.users.map((user) => user.login);
+    const useable_reviewers = difference(reviewers, existing_reviewers);
+    return existing_reviewers.concat(
       sampleSize(
         useable_reviewers,
         config.options.number_of_reviewers - existing_reviewers.length
       )
-    )
-  );
-
-  return existing_reviewers.concat(
-    sampleSize(
-      useable_reviewers,
-      config.options.number_of_reviewers - existing_reviewers.length
-    )
-  );
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 /* Private */
