@@ -6,7 +6,7 @@ const {
   identify_reviewers_by_author,
   should_request_review,
   fetch_default_reviewers,
-  randomly_pick_reviewers,
+  randomly_pick_reviewers_for_missing_slot,
 } = require('../src/reviewer');
 const { expect } = require('chai');
 
@@ -309,11 +309,11 @@ describe('reviewer', function() {
     });
   });
 
-  describe('randomly_pick_reviewers()', function() {
+  describe('randomly_pick_reviewers_for_missing_slot()', function() {
     it('returns all reviewers if the number of reviewers is not set', function() {
       const reviewers = [ 'dr-mario', 'mario', 'luigi' ];
       const config = {};
-      expect(randomly_pick_reviewers({ reviewers, config })).to.have.members([ 'dr-mario', 'mario', 'luigi' ]);
+      expect(randomly_pick_reviewers_for_missing_slot({ reviewers, config })).to.have.members([ 'dr-mario', 'mario', 'luigi' ]);
     });
 
     it('randommly pick up to the number of reviewers', function() {
@@ -324,7 +324,7 @@ describe('reviewer', function() {
         },
       };
 
-      const randomly_picked_reviewers = randomly_pick_reviewers({ reviewers, config });
+      const randomly_picked_reviewers = randomly_pick_reviewers_for_missing_slot({ reviewers, config });
       expect([ 'dr-mario', 'mario', 'luigi' ]).to.include.members(randomly_picked_reviewers);
       expect(new Set(randomly_picked_reviewers)).to.have.lengthOf(2);
     });
@@ -336,7 +336,7 @@ describe('reviewer', function() {
           number_of_reviewers: 4,
         },
       };
-      expect(randomly_pick_reviewers({ reviewers, config })).to.have.members([ 'dr-mario', 'mario', 'luigi' ]);
+      expect(randomly_pick_reviewers_for_missing_slot({ reviewers, config })).to.have.members([ 'dr-mario', 'mario', 'luigi' ]);
     });
   });
 });
