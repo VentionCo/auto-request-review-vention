@@ -16334,7 +16334,11 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
     pull_number: context.payload.pull_request.number,
   });
 
-  console.log(JSON.stringify(data.users))
+  const existing_reviewers = data.users.map((user) => user.login);
+  console.log(JSON.stringify(existing_reviewers));
+
+  console.log(`------`);
+  console.log(JSON.stringify(reviewers));
 
   // .then((response) => {
   //   // extract the reviewers from the response
