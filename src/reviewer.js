@@ -159,7 +159,7 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
   const context = get_context();
   const octokit = get_octokit();
 
-  const existing_reviewers = await octokit.pulls.listReviews({
+  const existing_reviewers = await octokit.pulls.listRequestedReviewers({
     owner: context.repo.owner,
     repo: context.repo.repo,
     pull_number: context.payload.pull_request.number,

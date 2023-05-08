@@ -69,7 +69,7 @@ async function run() {
   }
 
   core.info('Randomly picking reviewers if the number of reviewers is set');
-  reviewers = randomly_pick_reviewers_for_missing_slot({ reviewers, config });
+  reviewers = await randomly_pick_reviewers_for_missing_slot({ reviewers, config });
 
   core.info(`Requesting review to ${reviewers.join(', ')}`);
   await github.assign_reviewers(reviewers);
