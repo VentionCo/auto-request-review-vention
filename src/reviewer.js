@@ -3,7 +3,7 @@
 const core = require("@actions/core");
 const { get_octokit, get_context } = require("./github");
 const minimatch = require("minimatch");
-const sample_size = require("lodash/sampleSize");
+const { sampleSize, difference } = require("lodash");
 
 function fetch_other_group_members({ author, config }) {
   const DEFAULT_OPTIONS = {
@@ -154,8 +154,6 @@ function fetch_default_reviewers({ config, excludes = [] }) {
 }
 
 async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
-  console.log(`jimmmmy`);
-
   const context = get_context();
   const octokit = get_octokit();
 
@@ -167,9 +165,13 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
 
   const existing_reviewers = data.users.map((user) => user.login);
   console.log(JSON.stringify(existing_reviewers));
-
+  if (existing_reviewers >= 2) {
+    return [];
+  }
   console.log(`------`);
   console.log(JSON.stringify(reviewers));
+
+  const useable_reviewers = difference(reviewers, existing_reviewers);
 
   // .then((response) => {
   //   // extract the reviewers from the response
@@ -184,16 +186,23 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
   //   console.log(`Error fetching reviews: ${error.message}`);
   // });
 
-  console.log(existing_reviewers);
-  const { number_of_reviewers } = {
-    ...config.options,
-  };
+  console.log(useable_reviewers);
+  console.log(`---------------`);
+  console.log(
+    existing_reviewers.concat(
+      sampleSize(
+        useable_reviewers,
+        config.options.number_of_reviewers - existing_reviewers.length
+      )
+    )
+  );
 
-  if (number_of_reviewers === undefined) {
-    return reviewers;
-  }
-
-  return sample_size(reviewers, number_of_reviewers);
+  return existing_reviewers.concat(
+    sampleSize(
+      useable_reviewers,
+      config.options.number_of_reviewers - existing_reviewers.length
+    )
+  );
 }
 
 /* Private */
