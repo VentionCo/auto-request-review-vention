@@ -163,7 +163,14 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
       repo: context.repo.repo,
       pull_number: context.payload.pull_request.number,
     });
-    const existing_reviewers = data.users.map((user) => user.login);
+    const finishedReviewers = await getFinishedReviewers(
+      context.repo.owner,
+      context.repo.repo,
+      context.payload.pull_request.number
+    );
+    const existing_reviewers = data.users
+      .map((user) => user.login)
+      .concat(finishedReviewers);
     const useable_reviewers = difference(reviewers, existing_reviewers);
     return existing_reviewers.concat(
       sampleSize(
@@ -177,6 +184,28 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
 }
 
 /* Private */
+
+async function getFinishedReviewers(owner, repo, pull_number) {
+  try {
+    const { data: reviews } = await octokit.pulls.listReviews({
+      owner,
+      repo,
+      pull_number,
+    });
+
+    const finishedReviews = reviews.filter(
+      (review) =>
+        review.state === "approved" || review.state === "changes_requested"
+    );
+    const finishedReviewers = finishedReviews.map(
+      (review) => review.user.login
+    );
+
+    return finishedReviewers;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function replace_groups_with_individuals({ reviewers, config }) {
   const groups = (config.reviewers && config.reviewers.groups) || {};
