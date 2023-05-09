@@ -193,7 +193,7 @@ async function getFinishedReviewers(owner, repo, pull_number) {
       repo,
       pull_number,
     });
-    console.log(JSON.stringify(data))
+    console.log(JSON.stringify(reviews))
     console.log(`=============`)
     const finishedReviews = reviews.filter(
       (review) =>
