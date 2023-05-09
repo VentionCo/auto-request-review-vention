@@ -33054,7 +33054,7 @@ async function getFinishedReviewers(owner, repo, pull_number) {
 
     const finishedReviews = reviews.filter(
       (review) =>
-        review.state === "approved" || review.state === "changes_requested"
+        review.state === "approved" || review.state === "changes_requested" || review.state === "commented"
     );
     const finishedReviewers = finishedReviews.map(
       (review) => review.user.login
