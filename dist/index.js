@@ -33059,6 +33059,7 @@ async function getFinishedReviewers(owner, repo, pull_number) {
     const finishedReviewers = finishedReviews.map(
       (review) => review.user.login
     );
+    console.log(JSON.stringify(finishedReviewers))
 
     return finishedReviewers;
   } catch (error) {
