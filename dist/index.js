@@ -33044,6 +33044,7 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
 /* Private */
 
 async function getFinishedReviewers(owner, repo, pull_number) {
+  const octokit = get_octokit();
   try {
     const { data: reviews } = await octokit.pulls.listReviews({
       owner,
