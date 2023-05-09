@@ -197,7 +197,7 @@ async function getFinishedReviewers(owner, repo, pull_number) {
     console.log(`=============`)
     const finishedReviews = reviews.filter(
       (review) =>
-        review.state === "approved" || review.state === "changes_requested" || review.state === "commented"
+        review.state === "APPROVED" || review.state === "CHANGES_REQUESTED" || review.state === "COMMENTED"
     );
     const finishedReviewers = finishedReviews.map(
       (review) => review.user.login
