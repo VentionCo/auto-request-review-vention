@@ -193,7 +193,8 @@ async function getFinishedReviewers(owner, repo, pull_number) {
       repo,
       pull_number,
     });
-
+    console.log(JSON.stringify(data))
+    console.log(`=============`)
     const finishedReviews = reviews.filter(
       (review) =>
         review.state === "approved" || review.state === "changes_requested" || review.state === "commented"
