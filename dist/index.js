@@ -33021,6 +33021,7 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
       repo: context.repo.repo,
       pull_number: context.payload.pull_request.number,
     });
+    console.log(JSON.stringify(context.payload.pull_request))
     const finishedReviewers = await getFinishedReviewers(
       context.repo.owner,
       context.repo.repo,
@@ -33051,8 +33052,6 @@ async function getFinishedReviewers(owner, repo, pull_number) {
       repo,
       pull_number,
     });
-    console.log(JSON.stringify(reviews))
-    console.log(`=============`)
     const finishedReviews = reviews.filter(
       (review) =>
         review.state === "APPROVED" || review.state === "CHANGES_REQUESTED" || review.state === "COMMENTED"
@@ -33060,7 +33059,6 @@ async function getFinishedReviewers(owner, repo, pull_number) {
     const finishedReviewers = finishedReviews.map(
       (review) => review.user.login
     );
-    console.log(JSON.stringify(finishedReviewers))
 
     return finishedReviewers;
   } catch (error) {
