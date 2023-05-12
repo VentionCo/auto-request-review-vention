@@ -32861,7 +32861,7 @@ if (process.env.NODE_ENV !== 'automated-testing') {
 const core = __nccwpck_require__(2186);
 const { get_octokit, get_context } = __nccwpck_require__(8396);
 const minimatch = __nccwpck_require__(3973);
-const { sampleSize, difference } = __nccwpck_require__(250);
+const { sampleSize, difference, uniq } = __nccwpck_require__(250);
 
 function fetch_other_group_members({ author, config }) {
   const DEFAULT_OPTIONS = {
@@ -33021,20 +33021,25 @@ async function randomly_pick_reviewers_for_missing_slot({ reviewers, config }) {
       repo: context.repo.repo,
       pull_number: context.payload.pull_request.number,
     });
-    console.log(JSON.stringify(context.payload.pull_request))
+    console.log(JSON.stringify(context.payload.pull_request));
     const finishedReviewers = await getFinishedReviewers(
       context.repo.owner,
       context.repo.repo,
       context.payload.pull_request.number
     );
+    const finishedReviewersExcloudingPrMaker = difference(finishedReviewers, [
+      context.payload.pull_request.user.login,
+    ]);
     const existing_reviewers = data.users
       .map((user) => user.login)
-      .concat(finishedReviewers);
+      .concat(finishedReviewersExcloudingPrMaker);
     const useable_reviewers = difference(reviewers, existing_reviewers);
-    return existing_reviewers.concat(
-      sampleSize(
-        useable_reviewers,
-        config.options.number_of_reviewers - existing_reviewers.length
+    return uniq(
+      existing_reviewers.concat(
+        sampleSize(
+          useable_reviewers,
+          config.options.number_of_reviewers - existing_reviewers.length
+        )
       )
     );
   } catch (error) {
@@ -33054,7 +33059,9 @@ async function getFinishedReviewers(owner, repo, pull_number) {
     });
     const finishedReviews = reviews.filter(
       (review) =>
-        review.state === "APPROVED" || review.state === "CHANGES_REQUESTED" || review.state === "COMMENTED"
+        review.state === "APPROVED" ||
+        review.state === "CHANGES_REQUESTED" ||
+        review.state === "COMMENTED"
     );
     const finishedReviewers = finishedReviews.map(
       (review) => review.user.login
